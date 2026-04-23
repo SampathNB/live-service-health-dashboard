@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;1,400&family=JetBrains+Mono&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Base Colors - Professional Zinc/Indigo Palette */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --radius-lg: 10px;
+  --radius-md: 6px;
+  --radius-sm: 4px;
+}
+
+@layer base {
+  :root {
+    --background: #FFFFFF;
+    --foreground: #09090B;
+    --card: #FFFFFF;
+    --card-foreground: #09090B;
+    --popover: #FFFFFF;
+    --popover-foreground: #09090B;
+    --primary: #2563EB; /* Professional Blue */
+    --primary-foreground: #FFFFFF;
+    --secondary: #F4F4F5;
+    --secondary-foreground: #18181B;
+    --muted: #F4F4F5;
+    --muted-foreground: #71717A;
+    --accent: #F4F4F5;
+    --accent-foreground: #18181B;
+    --destructive: #EF4444;
+    --destructive-foreground: #F9FAFB;
+    --border: #E4E4E7;
+    --input: #E4E4E7;
+    --ring: #2563EB;
+  }
+
+  .dark {
+    --background: #09090B;
+    --foreground: #F8FAFC;
+    --card: #09090B;
+    --card-foreground: #F8FAFC;
+    --popover: #09090B;
+    --popover-foreground: #F8FAFC;
+    --primary: #3B82F6;
+    --primary-foreground: #09090B;
+    --secondary: #1E293B;
+    --secondary-foreground: #F8FAFC;
+    --muted: #1E293B;
+    --muted-foreground: #94A3B8;
+    --accent: #1E293B;
+    --accent-foreground: #F8FAFC;
+    --destructive: #7F1D1D;
+    --destructive-foreground: #F8FAFC;
+    --border: #1E293B;
+    --input: #1E293B;
+    --ring: #3B82F6;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary/30 transition-colors duration-300;
+  }
+  h1, h2, h3, h4 {
+    @apply font-sans font-semibold tracking-tight;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .label-xs {
+    @apply text-[11px] uppercase tracking-wider font-semibold text-muted-foreground;
+  }
+
+  .nav-link {
+    @apply flex items-center px-4 py-2 text-sm font-medium transition-colors hover:text-primary rounded-md hover:bg-accent;
+  }
+
+  .panel {
+    @apply bg-card border border-border shadow-sm rounded-xl overflow-hidden transition-all duration-300;
+  }
+
+  .premium-shadow {
+    @apply shadow-[0_1px_3px_0_rgba(0,0,0,0.1),0_1px_2px_0_rgba(0,0,0,0.06)];
+  }
+
+  /* Simple Tooltip */
+  [data-tooltip] {
+    position: relative;
+  }
+  [data-tooltip]::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    background: var(--foreground);
+    color: var(--background);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    z-index: 100;
+  }
+  [data-tooltip]:hover::before {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-4px);
+  }
+}
