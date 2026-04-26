@@ -109,6 +109,29 @@ export function ServiceGrid() {
                 )} />
               </div>
 
+              {/* Metrics Display */}
+              {service.metrics && (
+                <div className="grid grid-cols-3 gap-2 mb-4 py-3 border-y border-border/50">
+                  <div className="flex flex-col items-center text-center">
+                    <span className="text-[9px] uppercase font-bold text-muted-foreground/60 tracking-wider">Latency</span>
+                    <div className="text-xs font-bold text-primary">{Math.round(service.metrics.responseTime.p50)}ms</div>
+                  </div>
+                  <div className="flex flex-col items-center text-center">
+                    <span className="text-[9px] uppercase font-bold text-muted-foreground/60 tracking-wider">Error Rate</span>
+                    <div className={cn(
+                      "text-xs font-bold",
+                      service.metrics.errorRate > 1 ? "text-rose-500" : "text-emerald-500"
+                    )}>
+                      {service.metrics.errorRate.toFixed(2)}%
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center text-center">
+                    <span className="text-[9px] uppercase font-bold text-muted-foreground/60 tracking-wider">Req/sec</span>
+                    <div className="text-xs font-bold text-blue-500">{Math.round(service.metrics.requestRate)}</div>
+                  </div>
+                </div>
+              )}
+
               <div className="flex justify-between items-end pt-2 border-t border-border/50">
                 <div className="space-y-0.5">
                   <span className="text-[9px] uppercase font-bold text-muted-foreground/60 tracking-wider">Tier</span>

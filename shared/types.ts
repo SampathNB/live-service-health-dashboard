@@ -18,6 +18,7 @@ export interface Service {
     tier: ServiceTier;
     dependencies: string[]; // service IDs this depends on
   };
+  metrics?: MetricDataPoint; // Latest metrics snapshot
 }
 
 export interface MetricDataPoint {
