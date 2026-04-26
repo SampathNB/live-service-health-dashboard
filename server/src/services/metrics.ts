@@ -1,5 +1,16 @@
 import { MetricDataPoint } from "../../../shared/types";
 
+export function getLocalISOString(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const ms = String(date.getMilliseconds()).padStart(3, '0');
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${ms}`;
+}
+
 export function generateMetric(serviceId: string, time: number): MetricDataPoint {
   const seed = parseInt(serviceId.slice(0, 8), 36) % 100;
 
@@ -18,7 +29,7 @@ export function generateMetric(serviceId: string, time: number): MetricDataPoint
   const memory = 40 + Math.cos(time / 12) * 20 + Math.random() * 2;
 
   return {
-    timestamp: new Date().toISOString(),
+    timestamp: getLocalISOString(new Date()),
     responseTime: { p50, p95, p99 },
     requestRate,
     errorRate,
