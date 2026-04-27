@@ -89,7 +89,7 @@ Instead of the client interacting with raw data sources, the Node.js server aggr
 Strategic use of `ErrorBoundary` components around critical panels (Health Lattice, Performance Curve) ensures that a failure in one data source doesn't crash the entire dashboard.
 
 ### 5.3 Feature Flagging
-A centralized `FeatureFlag` component allows for controlled rollout of complex UI modules like the "Dependency Map" without impacting core stability.
+A centralized `FeatureFlag` component allows for controlled rollout of UI modules without impacting core stability.
 
 ### 5.4 Theme System
 Uses `next-themes` with Tailwind CSS 4 variables to provide a high-performance, system-aware dark/light mode with zero-runtime CSS variables.

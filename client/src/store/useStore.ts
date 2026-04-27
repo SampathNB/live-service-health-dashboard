@@ -45,7 +45,6 @@ export const useStore = create<DashboardState>((set) => ({
 
   featureFlags: {
     'enable-metrics-panel': true,
-    'enable-dependency-map': false,
     'enable-alert-actions': true,
   },
   setFeatureFlags: (flags) => set((state) => ({

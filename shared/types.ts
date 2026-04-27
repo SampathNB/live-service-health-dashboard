@@ -69,6 +69,5 @@ export type StreamEvent =
 
 export interface FeatureFlags {
   'enable-metrics-panel': boolean;
-  'enable-dependency-map': boolean;
   'enable-alert-actions': boolean;
 }
