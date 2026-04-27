@@ -2,7 +2,7 @@ import { Select, SelectItem, Skeleton } from '@/components';
 import { useStream } from '@/hooks';
 import { api } from '@/services';
 import { useStore } from '@/store';
-import { MetricDataPoint } from '@shared/types';
+import { MetricDataPoint, StreamEvent } from '@shared/types';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Activity } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -34,7 +34,7 @@ export function MetricsChart() {
     if (history) setLiveMetrics(history);
   }, [history]);
 
-  const onStreamEvent = useCallback((event: any) => {
+  const onStreamEvent = useCallback((event: StreamEvent) => {
     if (event.type === 'metric_update' && event.serviceId === selectedServiceId) {
       setLiveMetrics(prev => {
         const next = [...prev, event.data];

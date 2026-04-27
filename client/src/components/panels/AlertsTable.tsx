@@ -9,7 +9,7 @@ import { useStream } from '@/hooks';
 import { cn } from '@/lib';
 import { api } from '@/services';
 import { useStore } from '@/store';
-import { Alert, AlertStatus } from '@shared/types';
+import { AlertsResponse, AlertStatus, AlertSeverity, StreamEvent } from '@shared/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
 import { CheckCircle, ChevronLeft, ChevronRight, Clock, Search } from 'lucide-react';
@@ -36,7 +36,7 @@ export function AlertsTable() {
   });
 
   // Handle live alerts from WebSocket
-  const onStreamEvent = (event: any) => {
+  const onStreamEvent = (event: StreamEvent) => {
     if (event.type === 'alert_created') {
       const newAlert = event.data;
 
@@ -82,12 +82,12 @@ export function AlertsTable() {
     mutationFn: ({ id, status }: { id: string, status: AlertStatus }) => api.updateAlertStatus(id, status),
     onMutate: async ({ id, status }) => {
       await queryClient.cancelQueries({ queryKey: ['alerts'] });
-      const previous = queryClient.getQueryData(['alerts', alertFilters, page]);
-      queryClient.setQueryData(['alerts', alertFilters, page], (old: any) => {
+      const previous = queryClient.getQueryData<AlertsResponse>(['alerts', alertFilters, page]);
+      queryClient.setQueryData<AlertsResponse>(['alerts', alertFilters, page], (old) => {
         if (!old) return old;
         return {
           ...old,
-          data: old.data.map((a: Alert) => a.id === id ? { ...a, status } : a)
+          data: old.data.map((a) => a.id === id ? { ...a, status } : a)
         };
       });
       return { previous };
@@ -122,7 +122,7 @@ export function AlertsTable() {
         <div className="grid grid-cols-3 gap-2">
           <Select
             value={alertFilters.severity}
-            onChange={(e) => setAlertFilters({ severity: e.target.value as any })}
+            onChange={(e) => setAlertFilters({ severity: e.target.value as AlertSeverity | 'all' })}
             className="h-9 text-xs rounded-md bg-background"
           >
             <SelectItem value="all">Priority: All</SelectItem>
@@ -132,7 +132,7 @@ export function AlertsTable() {
           </Select>
           <Select
             value={alertFilters.status}
-            onChange={(e) => setAlertFilters({ status: e.target.value as any })}
+            onChange={(e) => setAlertFilters({ status: e.target.value as AlertStatus | 'all' })}
             className="h-9 text-xs rounded-md bg-background"
           >
             <SelectItem value="all">Status: All</SelectItem>
@@ -142,7 +142,7 @@ export function AlertsTable() {
           </Select>
           <Select
             value={alertFilters.serviceId}
-            onChange={(e) => setAlertFilters({ serviceId: e.target.value as any })}
+            onChange={(e) => setAlertFilters({ serviceId: e.target.value })}
             className="h-9 text-xs rounded-md bg-background"
           >
             <SelectItem value="all">Service: All</SelectItem>

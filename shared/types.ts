@@ -6,6 +6,14 @@ export type ServiceStatus = 'healthy' | 'degraded' | 'down';
 export type ServiceTier = 'critical' | 'standard' | 'best-effort';
 export type AlertSeverity = 'critical' | 'warning' | 'info';
 export type AlertStatus = 'open' | 'acknowledged' | 'resolved';
+export type AlertMetric = 'errorRate' | 'p50' | 'p95' | 'p99' | 'memory' | 'cpu';
+
+export interface AlertFilters {
+  status: AlertStatus | 'all';
+  severity: AlertSeverity | 'all';
+  search: string;
+  serviceId: string | 'all';
+}
 
 export interface Service {
   id: string;
@@ -40,7 +48,7 @@ export interface Alert {
   serviceName: string;
   severity: AlertSeverity;
   message: string;
-  metric: string; // which metric triggered it
+  metric: AlertMetric; // which metric triggered it
   threshold: number;
   currentValue: number;
   status: AlertStatus;
@@ -60,6 +68,13 @@ export interface DashboardSummary {
     info: number;
   };
   avgResponseTime: number;
+}
+
+export interface AlertsResponse {
+  data: Alert[];
+  total: number;
+  page: number;
+  pageSize: number;
 }
 
 export type StreamEvent =

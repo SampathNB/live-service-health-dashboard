@@ -1,4 +1,4 @@
-import { Alert, DashboardSummary, MetricDataPoint, Service } from '@shared/types';
+import { AlertFilters, AlertsResponse, Alert, DashboardSummary, MetricDataPoint, Service } from '@shared/types';
 
 const API_BASE = '/api';
 
@@ -16,7 +16,7 @@ export const api = {
     return res.json();
   },
 
-  getAlerts: async (params: any): Promise<{ data: Alert[], total: number }> => {
+  getAlerts: async (params: AlertFilters & { page?: number; pageSize?: number }): Promise<AlertsResponse> => {
     const query = new URLSearchParams();
     Object.entries(params).forEach(([k, v]) => {
       if (v && v !== 'all') query.append(k, String(v));

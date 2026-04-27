@@ -12,13 +12,11 @@ import {
   AppLayout 
 } from '@/components';
 // Local wrapper to fix next-themes type issues with React 18
-import { ThemeProvider as NextThemesProvider } from 'next-themes';
-const ThemeProvider = ({ children, ...props }: any) => {
-  const NextProvider = NextThemesProvider as any;
-  return <NextProvider {...props}>{children}</NextProvider>;
-};
+import { ThemeProvider as NextThemesProvider, type ThemeProviderProps } from 'next-themes';
+const ThemeProvider = (props: ThemeProviderProps) => <NextThemesProvider {...props} />;
 
 import { toast } from 'sonner';
+import type { StreamEvent } from '@shared/types';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,7 +31,7 @@ export default function App() {
   useUrlState();
   useStore();
 
-  const handleStreamEvent = useCallback((event: any) => {
+  const handleStreamEvent = useCallback((event: StreamEvent) => {
     // Invalidate relevant queries based on events
     if (event.type === 'status_change') {
       queryClient.invalidateQueries({ queryKey: ['services'] });

@@ -1,4 +1,4 @@
-import { AlertSeverity, AlertStatus, FeatureFlags, ServiceStatus } from '@shared/types';
+import { AlertFilters, AlertSeverity, FeatureFlags, ServiceStatus } from '@shared/types';
 import { create } from 'zustand';
 
 interface DashboardState {
@@ -11,13 +11,8 @@ interface DashboardState {
   timeRange: string;
   setTimeRange: (range: string) => void;
 
-  alertFilters: {
-    status: AlertStatus | 'all';
-    severity: AlertSeverity | 'all';
-    search: string;
-    serviceId: string | 'all';
-  };
-  setAlertFilters: (filters: Partial<DashboardState['alertFilters']>) => void;
+  alertFilters: AlertFilters;
+  setAlertFilters: (filters: Partial<AlertFilters>) => void;
 
   featureFlags: FeatureFlags;
   setFeatureFlags: (flags: Partial<FeatureFlags>) => void;
