@@ -99,6 +99,29 @@
     scrollbar-width: none;
   }
 
+  
+
+  @keyframes highlight-fade {
+    0% {
+      background-color: rgba(234, 179, 8, 0.3);
+      box-shadow: inset 0 0 10px rgba(234, 179, 8, 0.5);
+    }
+
+    50% {
+      background-color: rgba(234, 179, 8, 0.15);
+      box-shadow: inset 0 0 5px rgba(234, 179, 8, 0.3);
+    }
+
+    100% {
+      background-color: transparent;
+      box-shadow: none;
+    }
+  }
+
+  .animate-highlight-alert {
+    animation: highlight-fade 3s ease-in-out forwards;
+  }
+
   .label-xs {
     @apply text-[11px] uppercase tracking-wider font-semibold text-muted-foreground;
   }

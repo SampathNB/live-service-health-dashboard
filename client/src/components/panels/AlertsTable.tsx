@@ -5,6 +5,7 @@ import {
   Select,
   SelectItem
 } from '@/components';
+import { useStream } from '@/hooks';
 import { cn } from '@/lib';
 import { api } from '@/services';
 import { useStore } from '@/store';
@@ -12,13 +13,15 @@ import { Alert, AlertStatus } from '@shared/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
 import { CheckCircle, ChevronLeft, ChevronRight, Clock, Search } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 export function AlertsTable() {
   const queryClient = useQueryClient();
   const { alertFilters, setAlertFilters } = useStore();
   const [page, setPage] = useState(1);
+  const [highlightedIds, setHighlightedIds] = useState<Set<string>>(new Set());
+  const highlightTimeoutsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const pageSize = 25;
 
   // Fetch services for filter dropdown
@@ -30,8 +33,50 @@ export function AlertsTable() {
   const { data, isLoading } = useQuery({
     queryKey: ['alerts', alertFilters, page],
     queryFn: () => api.getAlerts({ ...alertFilters, page, pageSize }),
-    refetchInterval: 10000
   });
+
+  // Handle live alerts from WebSocket
+  const onStreamEvent = (event: any) => {
+    if (event.type === 'alert_created') {
+      const newAlert = event.data;
+
+      // Add to highlighted IDs
+      setHighlightedIds(prev => new Set([...prev, newAlert.id]));
+
+      // Remove highlight after 3 seconds
+      const timeout = setTimeout(() => {
+        setHighlightedIds(prev => {
+          const next = new Set(prev);
+          next.delete(newAlert.id);
+          return next;
+        });
+        highlightTimeoutsRef.current.delete(newAlert.id);
+      }, 3000);
+
+      highlightTimeoutsRef.current.set(newAlert.id, timeout);
+
+      // Reset to page 1 to show new alert at top
+      setPage(1);
+
+      // Invalidate and refetch alerts to include new one
+      queryClient.invalidateQueries({ queryKey: ['alerts'] });
+
+      // Show subtle notification
+      toast.success(`New alert: ${newAlert.message}`, {
+        duration: 4000,
+        position: 'bottom-right'
+      });
+    }
+  };
+
+  useStream(onStreamEvent);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      highlightTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+    };
+  }, []);
 
   const updateMutation = useMutation({
     mutationFn: ({ id, status }: { id: string, status: AlertStatus }) => api.updateAlertStatus(id, status),
@@ -78,7 +123,7 @@ export function AlertsTable() {
           <Select
             value={alertFilters.severity}
             onChange={(e) => setAlertFilters({ severity: e.target.value as any })}
-            className="h-9 text-xs rounded-md"
+            className="h-9 text-xs rounded-md bg-background"
           >
             <SelectItem value="all">Priority: All</SelectItem>
             <SelectItem value="critical">Critical</SelectItem>
@@ -88,7 +133,7 @@ export function AlertsTable() {
           <Select
             value={alertFilters.status}
             onChange={(e) => setAlertFilters({ status: e.target.value as any })}
-            className="h-9 text-xs rounded-md"
+            className="h-9 text-xs rounded-md bg-background"
           >
             <SelectItem value="all">Status: All</SelectItem>
             <SelectItem value="open">Open</SelectItem>
@@ -98,7 +143,7 @@ export function AlertsTable() {
           <Select
             value={alertFilters.serviceId}
             onChange={(e) => setAlertFilters({ serviceId: e.target.value as any })}
-            className="h-9 text-xs rounded-md"
+            className="h-9 text-xs rounded-md bg-background"
           >
             <SelectItem value="all">Service: All</SelectItem>
             {services.map(service => (
@@ -121,7 +166,15 @@ export function AlertsTable() {
         ) : alerts.length > 0 ? (
           <div className="divide-y divide-border">
             {alerts.map((alert) => (
-              <div key={alert.id} className="p-4 flex flex-col gap-2 hover:bg-muted/50 transition-colors">
+              <div
+                key={alert.id}
+                className={cn(
+                  "p-4 flex flex-col gap-2 transition-colors rounded",
+                  highlightedIds.has(alert.id)
+                    ? "animate-highlight-alert border-l-4 border-yellow-500"
+                    : "hover:bg-muted/50"
+                )}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className={cn(
