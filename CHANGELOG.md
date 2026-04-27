@@ -2,6 +2,8 @@
 - Dependency conflicts preventing app from running on fresh setup
 - Ensured npm install && npm run dev works correctly
 - Made time range selector fully functional
+- Managed any type to respective type
+- Removed unused components and utils
 
 ### Added
 - Add latency, error rate, and request rate to service cards
